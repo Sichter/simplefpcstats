@@ -121,32 +121,50 @@ class NominationsPerYear():
         the total count of nominations, all other rates are relative to
         the count of valid nominations.
         """
-        return 100 * self.valid / self.total
+        try:
+            return 100 * self.valid / self.total
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def successful_rate(self) -> float:
         """Return the percentage of successful nominations."""
-        return 100 * self.successful / self.valid
+        try:
+            return 100 * self.successful / self.valid
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def unsuccessful_rate(self) -> float:
         """Return the percentage of unsuccessful nominations."""
-        return 100 * self.unsuccessful / self.valid
+        try:
+            return 100 * self.unsuccessful / self.valid
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def withdrawn_rate(self) -> float:
         """Return the percentage of withdrawn nominations."""
-        return 100 * self.withdrawn / self.valid
+        try:
+            return 100 * self.withdrawn / self.valid
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def fpxed_fpded_rate(self) -> float:
         """Return the percentage of FPXed/FPDed nominations."""
-        return 100 * self.fpxed_fpded / self.valid
+        try:
+            return 100 * self.fpxed_fpded / self.valid
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def abandoned_rate(self) -> float:
         """Return the percentage of abandoned nominations."""
-        return 100 * self.abandoned / self.total
+        try:
+            return 100 * self.abandoned / self.total
+        except ZeroDivisionError:
+            return 0.0
 
 
 # MAIN ROUTINE
