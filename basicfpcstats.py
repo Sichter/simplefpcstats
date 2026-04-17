@@ -49,8 +49,8 @@ DATE: Final[str] = NOW.strftime('%Y-%m-%d')
 MIN_YEAR: Final[int] = 2019
 MAX_YEAR: Final[int] = NOW.year
 
-# Customized graph colours
-GRAPH_STYLE_WITH_TOTAL: Final[pygal.style.Style] = pygal.style.Style(
+# Customized chart colours
+CHART_STYLE_WITH_TOTAL: Final[pygal.style.Style] = pygal.style.Style(
     # Change colours to match the specific nomination results:
     colors=(
         '#03A9F4', '#3F51B5', '#009688', '#FFC107', '#F44336',
@@ -67,7 +67,7 @@ GRAPH_STYLE_WITH_TOTAL: Final[pygal.style.Style] = pygal.style.Style(
     # will actually work on Commons ...
     # font_family='"Noto Sans", "Liberation Sans", sans-serif',
 )
-GRAPH_STYLE_WITHOUT_TOTAL: Final[pygal.style.Style] = pygal.style.Style(
+CHART_STYLE_WITHOUT_TOTAL: Final[pygal.style.Style] = pygal.style.Style(
     # Use the same colours, but shifted by one because we do not display
     # the total amount/rate of all nominations (either because all
     # nominations are valid or because we are creating a relative diagram
@@ -205,12 +205,12 @@ def main() -> None:
     print(table)
     print()
 
-    # Create and save the graphs
+    # Create and save the charts
     any_abandoned = any(data.abandoned for data in data_per_year.values())
-    print('Creating the graph with absolute numbers ...')
-    create_abs_graph(data_per_year, any_abandoned)
-    print('Creating the graph with relative numbers ...')
-    create_rel_graph(data_per_year, any_abandoned)
+    print('Creating the chart with absolute numbers ...')
+    create_abs_chart(data_per_year, any_abandoned)
+    print('Creating the chart with relative numbers ...')
+    create_rel_chart(data_per_year, any_abandoned)
 
 
 # SUBROUTINES
@@ -303,11 +303,11 @@ def format_abs_rel(count: int, percent: float) -> str:
     return f'{count} = {percent:0.2f}\u00A0%'
 
 
-def create_abs_graph(
+def create_abs_chart(
     data_per_year: dict[int, NominationsPerYear],
     any_abandoned: bool,
 ) -> None:
-    """Create and save a line graph with the absolute numbers per year.
+    """Create and save a line chart with the absolute numbers per year.
 
     Args:
         data_per_year: A dictionary using the years as keys
@@ -329,9 +329,9 @@ def create_abs_graph(
     if any_abandoned:
         abandoned_per_year = [data.abandoned for data in sorted_data]
 
-    # Define the graph
+    # Define the chart
     style = (
-        GRAPH_STYLE_WITH_TOTAL if any_abandoned else GRAPH_STYLE_WITHOUT_TOTAL
+        CHART_STYLE_WITH_TOTAL if any_abandoned else CHART_STYLE_WITHOUT_TOTAL
     )
     chart = pygal.Line(style=style, include_x_axis=True)
     chart.title = (
@@ -354,15 +354,15 @@ def create_abs_graph(
         chart.add('Abandoned', abandoned_per_year)
     # Else: omit the line because it would be congruent with the abscissa.
 
-    # Render and save the graph as SVG file
+    # Render and save the chart as SVG file
     render_and_save_chart(chart, 'fpc_nominations_per_year.svg')
 
 
-def create_rel_graph(
+def create_rel_chart(
     data_per_year: dict[int, NominationsPerYear],
     any_abandoned: bool,
 ) -> None:
-    """Create and save a line graph with the success rate etc. per year.
+    """Create and save a line chart with the success rate etc. per year.
 
     Args:
         data_per_year: A dictionary using the years as keys
@@ -383,8 +383,8 @@ def create_rel_graph(
     if any_abandoned:
         abandoned_per_year = [data.abandoned_rate for data in sorted_data]
 
-    # Define the graph
-    chart = pygal.Line(style=GRAPH_STYLE_WITHOUT_TOTAL, include_x_axis=True)
+    # Define the chart
+    chart = pygal.Line(style=CHART_STYLE_WITHOUT_TOTAL, include_x_axis=True)
     chart.title = (
         'Candidates for featured picture status per year – '
         'success rate'
@@ -402,13 +402,13 @@ def create_rel_graph(
         chart.add('Abandoned', abandoned_per_year)
     # Else: omit the line because it would be congruent with the abscissa.
 
-    # Render and save the graph as SVG file
+    # Render and save the chart as SVG file
     render_and_save_chart(chart, 'fpc_success_rate_per_year.svg')
 
 
 def render_and_save_chart(chart: pygal.Graph, filename: str) -> None:
-    """Render the graph as SVG data and save them to a file."""
-    # Render the graph as SVG data
+    """Render the chart as SVG data and save them to a file."""
+    # Render the chart
     svg_data = chart.render(
         is_unicode=True,     # We need an Unicode string, not bytes.
         pretty_print=False,  # Set to True if you want to edit the file.
@@ -428,17 +428,17 @@ def render_and_save_chart(chart: pygal.Graph, filename: str) -> None:
     # for the SVG root element; that’s invalid, so remove the attribute.
     svg_data = svg_data.replace(' id=""', '')
 
-    # Save the graph
+    # Save the chart
     file_path = pathlib.Path(filename)
     try:
         file_path.write_text(
             svg_data, encoding='utf-8', errors='strict', newline='\n'
         )
     except Exception as exc:  # pylint: disable=broad-exception-caught
-        print(f'Cound not save the graph to a SVG file: {exc}.')
+        print(f'Cound not save the chart to a SVG file: {exc}.')
     else:
         print(
-            'The graph was saved to your current working directory '
+            'The chart was saved to your current working directory '
             f'as ‘{filename}’.'
         )
 
